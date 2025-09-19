@@ -214,4 +214,14 @@ public interface TilemanModeConfig extends Config {
     default int expPerTile() {
         return 1000;
     }
+
+    @ConfigItem(
+            keyName = "disableExpGain",
+            name = "Disable Experience Gain",
+            description = "Manually disables experience gain",
+            section = customGameModeSection,
+            position = 6
+    )
+    default boolean disableExpGain() { return false; }
+
 }

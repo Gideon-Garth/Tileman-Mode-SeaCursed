@@ -129,6 +129,8 @@ public class TilemanModePlugin extends Plugin {
     private boolean lastAutoTilesConfig = false;
     private boolean inHouse = false;
     private long totalXp;
+    private long ignoredXp;
+    private long lastTickXp;
 
     @Subscribe
     public void onMenuOptionClicked(MenuOptionClicked event) {
@@ -169,7 +171,18 @@ public class TilemanModePlugin extends Plugin {
 
     @Subscribe
     public void onGameTick(GameTick tick) {
-        autoMark();
+        autoMark(); //Handles player movement and tile marking every tick
+        System.out.println("onGameTick is checking config.disableExpGain(): " + config.disableExpGain());
+        if (config.disableExpGain()) {
+            System.out.println("Button is checked this tick!");
+            //long currentXp = client.getOverallExperience();
+            //long tickXpGain = currentXp - lastTickXp; // xp gained since the last tick
+            //ignoredXp += tickXpGain; //add gained xp to ignored "pool/total"
+            //lastTickXp = currentXp; //update lastTickXp for the next tick's calculation
+            //System.out.println("tickXpGain: " + tickXpGain);
+            //System.out.println("ignoredXp: " + ignoredXp);
+            //System.out.println("lastTickXp: " + lastTickXp);
+        }
     }
 
     @Subscribe
@@ -196,6 +209,18 @@ public class TilemanModePlugin extends Plugin {
         }
         lastAutoTilesConfig = config.automarkTiles();
         updateTileCountFromConfigs();
+        if (event.getKey().equals("disableExpGain")) { // event was the disable button
+            System.out.println("Debug: Disable event triggered");
+            if (config.disableExpGain()) { // button was CHECKED
+                System.out.println("Debug: button was checked");
+                lastTickXp = client.getOverallExperience();
+                System.out.println("Debug: xp is paused. Current ignored xp total: " + ignoredXp );
+            }
+            else { // button was UNCHECKED
+                System.out.println("Debug: button was unchecked");
+                System.out.println("Debug: xp gain resumed. Current ignored xp total: " + ignoredXp);
+            }
+        }
     }
 
 
